@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using MealTracker.Database;
 using MealTracker.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -18,6 +19,10 @@ namespace MealTracker
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Logging.AddDebug();
+
+            builder.Services.AddSingleton<SqliteConnectionFactory>();
+
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<MainViewModel>();
 
@@ -25,7 +30,6 @@ namespace MealTracker
             builder.Services.AddTransient<RecipesViewModel>();
 
 #if DEBUG
-            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
