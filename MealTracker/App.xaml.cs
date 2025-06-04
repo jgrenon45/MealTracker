@@ -44,7 +44,7 @@ namespace MealTracker
                         }
                     }
                 };
-                MainPage.ShowPopup(popup);
+                Shell.Current.CurrentPage.ShowPopup(popup);
             }
 
             base.OnStart();

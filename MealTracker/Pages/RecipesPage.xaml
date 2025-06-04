@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MealTracker.RecipesPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              Title="Recipes"
              xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
              x:DataType="viewmodel:RecipesViewModel">
@@ -15,16 +16,31 @@
                         SelectionMode="Single"
                         SelectedItem="{Binding SelectedRecipe, Mode=TwoWay}"
                         Margin="10"
+                        WidthRequest="500"
                         Grid.Row="1">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="{x:Type x:String}">
-                    <Border Padding="10">
-                        <StackLayout>
-                            <Label Text="{Binding Name}" FontSize="24" FontAttributes="Bold" />
-                            <Label Text="{Binding Description}" FontSize="16" />
-                            <Button Text="Edit" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditRecipeCommand}" CommandParameter="{Binding .}" />
-                        </StackLayout>
-                    </Border>
+                    <Grid Padding="10" ColumnDefinitions=".75*,.25*">
+                        <!-- Recipe Name -->
+                        <Label Text="{Binding Name}" VerticalOptions="Center" Grid.Column="0" />
+
+                        <!--Favourite Button-->
+                        
+                        <!-- 3 Dots Button -->
+                        <ImageButton
+                            Source="ellipsis.png"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipesViewModel}}, Path=ShowOptionsCommand}"
+                            CommandParameter="{Binding .}"
+                            BackgroundColor="Transparent"
+                            HeightRequest="24"
+                            WidthRequest="24"
+                            VerticalOptions="Center"
+                            Grid.Column="1">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={DynamicResource Gray950}, Dark={DynamicResource White}}" />
+                            </ImageButton.Behaviors>
+                        </ImageButton>
+                    </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

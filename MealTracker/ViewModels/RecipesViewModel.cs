@@ -64,7 +64,7 @@ namespace MealTracker.ViewModels
                         }
                     }
                 };
-                //MainPage.ShowPopup(popup);
+                Shell.Current.CurrentPage.ShowPopup(popup);
             }
         }
 
@@ -86,6 +86,37 @@ namespace MealTracker.ViewModels
                 recipeDTO.Name
             ));
         }
+
+        [RelayCommand]
+        private async Task ShowOptions(Recipe recipe)
+        {
+            string action = await Shell.Current.CurrentPage.DisplayActionSheet($"Options for {recipe.Name}", "Cancel", null, "Edit", "Delete");
+
+            switch (action)
+            {
+                case "Edit":
+                    // Navigate to edit page or show edit UI
+                    break;
+                case "Delete":
+                    bool confirm = await Shell.Current.CurrentPage.DisplayAlert(
+                        "Delete", $"Delete {recipe.Name}?", "Yes", "No");
+                    if (confirm)
+                    {
+                        ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
+
+                        RecipeDTO recipeDTO = new RecipeDTO
+                        {
+                            Id = recipe.Id,
+                            Name = recipe.Name
+                        };
+
+                        await database.DeleteAsync(recipeDTO);
+
+                        _recipes.Remove(recipe);
+                    }
+                    break;
+            }
+        }            
 
     }
 }
