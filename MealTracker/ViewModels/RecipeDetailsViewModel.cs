@@ -8,6 +8,7 @@ using SQLite;
 namespace MealTracker.ViewModels
 {
     [QueryProperty(nameof(RecipeId), "RecipeId")]
+    [QueryProperty(nameof(IsEditMode), "IsEditMode")]
     public partial class RecipeDetailsViewModel : ObservableObject
     {
         private readonly SqliteConnectionFactory sqliteConnectionFactory;
@@ -25,6 +26,9 @@ namespace MealTracker.ViewModels
 
         [ObservableProperty]
         private bool isInstructionsVisible = false;
+
+        [ObservableProperty]
+        private bool isEditMode = false;
         #endregion
 
         public RecipeDetailsViewModel(SqliteConnectionFactory sqliteConnectionFactory)
@@ -99,6 +103,49 @@ namespace MealTracker.ViewModels
         }
 
         [RelayCommand]
+        private async Task SaveRecipeAsync()
+        {
+            ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
+
+            RecipeDTO recipeDTO = new RecipeDTO
+            {
+                Id = Recipe.Id,
+                Name = Recipe.Name,
+                Description = Recipe.Description,
+                Ingredients = Recipe.Ingredients,
+                Instructions = Recipe.Instructions,
+                PreparationTime = Recipe.PreparationTime,
+                CookingTime = Recipe.CookingTime,
+                Servings = Recipe.Servings
+            };
+
+            try
+            {
+                await database.UpdateAsync(recipeDTO);
+
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during data saving
+                var popup = new Popup
+                {
+                    Content = new VerticalStackLayout
+                    {
+                        Children =
+                        {
+                            new Label
+                            {
+                                Text = $"Error saving recipe: {ex.Message}"
+                            }
+                        }
+                    }
+                };
+                Shell.Current.CurrentPage.ShowPopup(popup);
+            }
+
+        }
+
+        [RelayCommand]
         private void ShowIngredients()
         {
             IsIngredientsVisible = true;
@@ -110,6 +157,12 @@ namespace MealTracker.ViewModels
         {
             IsIngredientsVisible = false;
             IsInstructionsVisible = true;
+        }
+
+        [RelayCommand]
+        private void ToggleEditMode()
+        {
+            IsEditMode = !IsEditMode;
         }
         #endregion
     }

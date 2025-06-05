@@ -134,7 +134,7 @@ namespace MealTracker.ViewModels
             if (recipe == null)
                 return;
 
-            await Shell.Current.GoToAsync($"{nameof(RecipeDetailsPage)}?RecipeId={recipe.Id}");
+            await Shell.Current.GoToAsync($"{nameof(RecipeDetailsPage)}?RecipeId={recipe.Id}&IsEditMode={false}");
         }
         #endregion
     }

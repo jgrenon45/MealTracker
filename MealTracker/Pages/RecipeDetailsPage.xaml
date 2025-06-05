@@ -6,25 +6,66 @@
              xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
              x:DataType="viewmodel:RecipeDetailsViewModel"
              Title="Recipe Details">
-    <Grid RowDefinitions="*,*">
+    <Grid RowDefinitions="*,*,Auto">
         <!-- Row 0 -->
         <Grid Grid.Row="0"
               RowDefinitions="*,*"
               ColumnDefinitions="*,*">
             <Image Source="pie_placeholder.png" Grid.Column="0" Grid.RowSpan="2"/>
-            <Label Text="{Binding Recipe.Name}" 
-                   FontSize="42" 
-                   HorizontalOptions="Start" 
-                   VerticalOptions="End" 
-                   Grid.Row="0"
-                   Grid.Column="1"/>
+            
+            <!-- Recipe Name + Edit Button -->
+            <HorizontalStackLayout Grid.Row="0"
+                                   Grid.Column="1"
+                                   Spacing="10">
+                <Entry Text="{Binding Recipe.Name}"
+                       IsVisible="{Binding IsEditMode}"
+                       FontSize="42" 
+                       HorizontalOptions="Start" 
+                       VerticalOptions="End"/>
+                <Label Text="{Binding Recipe.Name}" 
+                       IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                       FontSize="42" 
+                       HorizontalOptions="Start" 
+                       VerticalOptions="End"/>
+                <Button ImageSource="edit.png" VerticalOptions="End" Command="{Binding ToggleEditModeCommand}"/>
+            </HorizontalStackLayout>
+
+            <!-- Times and Servings -->
             <HorizontalStackLayout VerticalOptions="Center" Grid.Row="1" Grid.Column="1" Spacing="10">
                 <Image Source="timer.png" HeightRequest="32"/>
-                <Label Text="{Binding Recipe.PreparationTime}" FontSize="24" VerticalOptions="Center"/>
+                <Entry Text="{Binding Recipe.PreparationTime}"
+                       FontSize="24"
+                       IsVisible="{Binding IsEditMode}"
+                       WidthRequest="115"
+                       Keyboard="Time"
+                       VerticalOptions="Center"/>
+                <Label Text="{Binding Recipe.PreparationTime}"
+                       FontSize="24"
+                       IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                       VerticalOptions="Center"/>
+
                 <Image Source="cooking.png" HeightRequest="32"/>
-                <Label Text="{Binding Recipe.CookingTime}" FontSize="24" VerticalOptions="Center"/>
+                <Entry Text="{Binding Recipe.CookingTime}"
+                       FontSize="24"
+                       IsVisible="{Binding IsEditMode}"
+                       WidthRequest="115"
+                       Keyboard="Time"
+                       VerticalOptions="Center"/>
+                <Label Text="{Binding Recipe.CookingTime}"
+                       FontSize="24"
+                       IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                       VerticalOptions="Center"/>
+
                 <Image Source="serving.png" HeightRequest="32"/>
-                <Label Text="{Binding Recipe.Servings}" FontSize="24" VerticalOptions="Center"/>
+                <Entry Text="{Binding Recipe.Servings}"
+                       FontSize="24"
+                       IsVisible="{Binding IsEditMode}"
+                       Keyboard="Numeric"
+                       VerticalOptions="Center"/>
+                <Label Text="{Binding Recipe.Servings}"
+                       FontSize="24"
+                       IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                       VerticalOptions="Center"/>
             </HorizontalStackLayout>
         </Grid>
 
@@ -36,14 +77,40 @@
                 <Button Text="Instructions" Command="{Binding ShowInstructionsCommand}" />
             </HorizontalStackLayout>
 
-            <!-- Tab Content -->
+            <!-- Tab Content: Ingredients -->
             <ContentView HorizontalOptions="Center" IsVisible="{Binding IsIngredientsVisible}">
-                <Label Text="• 2 eggs" />
+                <VerticalStackLayout VerticalOptions="Fill">
+                    <CollectionView ItemsSource="{Binding Recipe.Ingredients}"/>
+                    <Button Text="Add Ingredient" 
+                            Command="{Binding AddIngredientCommand}"
+                            IsVisible="{Binding IsEditMode}"/>
+                </VerticalStackLayout>
             </ContentView>
 
+            <!-- Tab Content: Instructions -->
             <ContentView HorizontalOptions="Center" IsVisible="{Binding IsInstructionsVisible}">
-                <Label Text="1. Mix ingredients" />
+                <VerticalStackLayout>
+                    <Editor Text="{Binding Recipe.Instructions}"
+                        AutoSize="TextChanges"
+                        IsVisible="{Binding IsEditMode}"
+                        WidthRequest="300"
+                        Placeholder="Enter instructions..." />
+
+                    <Label Text="{Binding Recipe.Instructions}"
+                       IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                       WidthRequest="300" />
+                </VerticalStackLayout>
             </ContentView>
         </VerticalStackLayout>
+        
+        <!--Row 2-->
+        <Button ImageSource="save.png"
+                Grid.Row="1"
+                Margin="10"
+                Command="{Binding SaveRecipeCommand}"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                IsVisible="{Binding IsEditMode}"
+                HeightRequest="30"/>
     </Grid>
 </ContentPage>

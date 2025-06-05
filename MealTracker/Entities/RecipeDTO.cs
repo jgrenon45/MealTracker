@@ -15,10 +15,10 @@ namespace MealTracker.Entities
 
         public string Name { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Ignore]
-        public List<string> Ingredients { get; set; } = new List<string>();
+        public List<string>? Ingredients { get; set; } = new List<string>();
 
         // Backing property stored in the DB
         public string IngredientsJson
@@ -29,7 +29,7 @@ namespace MealTracker.Entities
                 : JsonSerializer.Deserialize<List<string>>(value);
         }
 
-        public string Instructions { get; set; }
+        public string? Instructions { get; set; }
 
         public TimeSpan PreparationTime { get; set; }
 

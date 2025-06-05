@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,23 +7,30 @@ using System.Threading.Tasks;
 
 namespace MealTracker.Entities
 {
-    public class Recipe
+    public partial class Recipe : ObservableObject
     {
         public int Id { get; }
 
-        public string Name { get; }
+        [ObservableProperty]
+        public string name;
 
-        public string? Description { get; }
+        [ObservableProperty]
+        public string? description;
 
-        public List<string>? Ingredients { get; } = new List<string>();
+        [ObservableProperty]
+        public List<string> ingredients = new List<string>();
 
-        public string? Instructions { get; }
+        [ObservableProperty]
+        public string? instructions;
 
-        public TimeSpan? PreparationTime { get; }
+        [ObservableProperty]
+        public TimeSpan preparationTime;
 
-        public TimeSpan? CookingTime { get; }
+        [ObservableProperty]
+        public TimeSpan cookingTime;
 
-        public int? Servings { get; }
+        [ObservableProperty]
+        public int servings;
 
         //Simple constructor for basic recipe creation
         public Recipe(int id, string name)

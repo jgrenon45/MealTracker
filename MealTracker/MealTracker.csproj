@@ -61,8 +61,14 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Images\Icons\cooking.svg" />
+	  <None Remove="Resources\Images\Icons\edit.svg" />
+	  <None Remove="Resources\Images\Icons\save.svg" />
 	  <None Remove="Resources\Images\Icons\serving.svg" />
 	  <None Remove="Resources\Images\Icons\timer.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\Icons\save.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -84,6 +90,7 @@
 
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\Icons\cooking.svg" />
+	  <MauiImage Include="Resources\Images\Icons\edit.svg" />
 	  <MauiImage Include="Resources\Images\Icons\ellipsis.svg" />
 	  <MauiImage Include="Resources\Images\Icons\serving.svg" />
 	  <MauiImage Include="Resources\Images\Icons\timer.svg" />
