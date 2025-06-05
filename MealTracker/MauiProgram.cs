@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using MealTracker.Database;
+using MealTracker.Pages;
 using MealTracker.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -28,6 +29,9 @@ namespace MealTracker
 
             builder.Services.AddTransient<RecipesPage>();
             builder.Services.AddTransient<RecipesViewModel>();
+
+            builder.Services.AddTransient<RecipeDetailsPage>();
+            builder.Services.AddTransient<RecipeDetailsViewModel>();
 
 #if DEBUG
 #endif

@@ -60,6 +60,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\Icons\cooking.svg" />
+	  <None Remove="Resources\Images\Icons\serving.svg" />
+	  <None Remove="Resources\Images\Icons\timer.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="11.2.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
@@ -68,13 +74,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\RecipeDetailsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\RecipesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Resources\Icons\" />
+	  <MauiImage Include="Resources\Images\Icons\cooking.svg" />
+	  <MauiImage Include="Resources\Images\Icons\ellipsis.svg" />
+	  <MauiImage Include="Resources\Images\Icons\serving.svg" />
+	  <MauiImage Include="Resources\Images\Icons\timer.svg" />
 	</ItemGroup>
 
 </Project>

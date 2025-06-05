@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MealTracker.Pages.RecipeDetailsPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
+             x:DataType="viewmodel:RecipeDetailsViewModel"
+             Title="Recipe Details">
+    <Grid RowDefinitions="*,*">
+        <!-- Row 0 -->
+        <Grid Grid.Row="0"
+              RowDefinitions="*,*"
+              ColumnDefinitions="*,*">
+            <Image Source="pie_placeholder.png" Grid.Column="0" Grid.RowSpan="2"/>
+            <Label Text="{Binding Recipe.Name}" 
+                   FontSize="42" 
+                   HorizontalOptions="Start" 
+                   VerticalOptions="End" 
+                   Grid.Row="0"
+                   Grid.Column="1"/>
+            <HorizontalStackLayout VerticalOptions="Center" Grid.Row="1" Grid.Column="1" Spacing="10">
+                <Image Source="timer.png" HeightRequest="32"/>
+                <Label Text="{Binding Recipe.PreparationTime}" FontSize="24" VerticalOptions="Center"/>
+                <Image Source="cooking.png" HeightRequest="32"/>
+                <Label Text="{Binding Recipe.CookingTime}" FontSize="24" VerticalOptions="Center"/>
+                <Image Source="serving.png" HeightRequest="32"/>
+                <Label Text="{Binding Recipe.Servings}" FontSize="24" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </Grid>
+
+        <!-- Row 1 -->
+        <VerticalStackLayout Grid.Row="1" HorizontalOptions="Fill">
+            <!-- Simulated Tabs -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Padding="10">
+                <Button Text="Ingredients" Command="{Binding ShowIngredientsCommand}" />
+                <Button Text="Instructions" Command="{Binding ShowInstructionsCommand}" />
+            </HorizontalStackLayout>
+
+            <!-- Tab Content -->
+            <ContentView HorizontalOptions="Center" IsVisible="{Binding IsIngredientsVisible}">
+                <Label Text="• 2 eggs" />
+            </ContentView>
+
+            <ContentView HorizontalOptions="Center" IsVisible="{Binding IsInstructionsVisible}">
+                <Label Text="1. Mix ingredients" />
+            </ContentView>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

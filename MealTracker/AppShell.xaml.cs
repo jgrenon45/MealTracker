@@ -1,4 +1,6 @@
-﻿namespace MealTracker
+﻿using MealTracker.Pages;
+
+namespace MealTracker
 {
     public partial class AppShell : Shell
     {
@@ -7,6 +9,7 @@
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(RecipesPage), typeof(RecipesPage));
+            Routing.RegisterRoute(nameof(RecipeDetailsPage), typeof(RecipeDetailsPage));
         }
     }
 }

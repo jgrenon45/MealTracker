@@ -3,11 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MealTracker.Database;
 using MealTracker.Entities;
+using MealTracker.Pages;
 using SQLite;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Windows.Input;
 
 namespace MealTracker.ViewModels
 {
@@ -15,13 +13,15 @@ namespace MealTracker.ViewModels
     {
         private readonly SqliteConnectionFactory sqliteConnectionFactory;
 
-        private ObservableCollection<Recipe> _recipes = new ObservableCollection<Recipe>();
+        #region Properties
 
-        public ObservableCollection<Recipe> Recipes
-        {
-            get => _recipes;
-            set => SetProperty(ref _recipes, value);
-        }
+        [ObservableProperty]
+        private ObservableCollection<Recipe> recipes = new ObservableCollection<Recipe>();
+
+        [ObservableProperty]
+        private Recipe selectedRecipe;
+        #endregion
+
 
         public RecipesViewModel(SqliteConnectionFactory sqliteConnectionFactory)
         {
@@ -31,17 +31,27 @@ namespace MealTracker.ViewModels
 
         }
 
+        partial void OnSelectedRecipeChanged(Recipe value)
+        {
+            if (value != null)
+            {
+                GoToRecipeDetailsCommand.Execute(value);
+            }
+        }
+
+        #region Commands
+
         [RelayCommand]
         private async Task LoadRecipesAsync()
         {
             ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
             try
             {
-                List<RecipeDTO> recipes = await database.Table<RecipeDTO>().ToListAsync();
+                List<RecipeDTO> recipesDTO = await database.Table<RecipeDTO>().ToListAsync();
 
-                foreach (RecipeDTO dto in recipes)
+                foreach (RecipeDTO dto in recipesDTO)
                 {
-                    _recipes.Add(new Recipe
+                    Recipes.Add(new Recipe
                     (
                         dto.Id,
                         dto.Name
@@ -80,7 +90,7 @@ namespace MealTracker.ViewModels
 
             await database.InsertAsync(recipeDTO);
 
-            _recipes.Add(new Recipe
+            Recipes.Add(new Recipe
             (
                 recipeDTO.Id,
                 recipeDTO.Name
@@ -112,11 +122,20 @@ namespace MealTracker.ViewModels
 
                         await database.DeleteAsync(recipeDTO);
 
-                        _recipes.Remove(recipe);
+                        Recipes.Remove(recipe);
                     }
                     break;
             }
-        }            
+        }
 
+        [RelayCommand]
+        private async Task GoToRecipeDetailsAsync(Recipe recipe)
+        {
+            if (recipe == null)
+                return;
+
+            await Shell.Current.GoToAsync($"{nameof(RecipeDetailsPage)}?RecipeId={recipe.Id}");
+        }
+        #endregion
     }
 }
