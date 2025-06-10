@@ -33,6 +33,9 @@ namespace MealTracker
             builder.Services.AddTransient<RecipeDetailsPage>();
             builder.Services.AddTransient<RecipeDetailsViewModel>();
 
+            builder.Services.AddTransient<IngredientPicker>();
+            builder.Services.AddTransient<IngredientPickerViewModel>();
+
 #if DEBUG
 #endif
 

@@ -60,6 +60,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\Icons\add.svg" />
 	  <None Remove="Resources\Images\Icons\cooking.svg" />
 	  <None Remove="Resources\Images\Icons\edit.svg" />
 	  <None Remove="Resources\Images\Icons\save.svg" />
@@ -68,6 +69,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiImage Include="Resources\Images\Icons\add.svg" />
 	  <MauiImage Include="Resources\Images\Icons\save.svg" />
 	</ItemGroup>
 
@@ -80,6 +82,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\IngredientPicker.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\RecipeDetailsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

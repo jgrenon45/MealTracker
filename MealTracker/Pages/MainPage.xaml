@@ -4,7 +4,7 @@
              x:Class="MealTracker.MainPage"
              xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
              x:DataType="viewmodel:MainViewModel">
-    <Grid RowDefinitions=".50*, .50*">
+    <Grid RowDefinitions=".50*, .50*, Auto">
         <Label Text="Welcome to MealTracker!"
                FontSize="32"
                HorizontalOptions="Center"
@@ -17,6 +17,14 @@
                 Grid.Row="1"
                 VerticalOptions="Start"
                 Command="{Binding GetStartedCommand}">
+        </Button>
+        <!--Debug Button-->
+        <Button Text="Delete Ingredients"
+        FontSize="24"
+        HorizontalOptions="Center"
+        Grid.Row="2"
+        VerticalOptions="Start"
+        Command="{Binding ResetIngredientsCommand}">
         </Button>
     </Grid>
 </ContentPage>

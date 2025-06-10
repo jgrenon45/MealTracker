@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MealTracker.Pages.IngredientPicker"
+               xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
+               x:DataType="viewmodel:IngredientPickerViewModel"
+               xmlns:entities="clr-namespace:MealTracker.Entities"
+               CanBeDismissedByTappingOutsideOfPopup="False">
+    <Grid Padding="10" 
+          BackgroundColor="Grey" 
+          RowDefinitions="Auto,Auto,*,Auto"
+          ColumnDefinitions="*,0.2*"
+          HeightRequest="300"
+          WidthRequest="300">
+        <Label Grid.Row="0" VerticalOptions="Center" Text="Select an ingredient:" FontAttributes="Bold"/>
+        <Button Grid.Column="1" ImageSource="add.png"  Command="{Binding CreateIngredientCommand}" HorizontalOptions="End"/>
+        <Entry Grid.ColumnSpan="2" Grid.Row="1" Placeholder="Search..."/>
+        <CollectionView ItemsSource="{Binding Ingredients}" 
+                        SelectedItems="{Binding SelectedIngredients, Mode=TwoWay}" 
+                        SelectionMode="Multiple"
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="entities:Ingredient">
+                    <Label Text="{Binding Name}" Padding="5"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Button Grid.ColumnSpan="2" 
+                Grid.Row="3" 
+                Text="Add Selected"
+                Clicked="CloseButton_Clicked"/>
+    </Grid>
+</toolkit:Popup>

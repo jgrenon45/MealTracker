@@ -26,9 +26,6 @@ namespace MealTracker.ViewModels
         public RecipesViewModel(SqliteConnectionFactory sqliteConnectionFactory)
         {
             this.sqliteConnectionFactory = sqliteConnectionFactory;  
-            
-            LoadRecipesCommand.Execute(null); // Load recipes when the view model is initialized
-
         }
 
         partial void OnSelectedRecipeChanged(Recipe value)
@@ -48,6 +45,8 @@ namespace MealTracker.ViewModels
             try
             {
                 List<RecipeDTO> recipesDTO = await database.Table<RecipeDTO>().ToListAsync();
+
+                Recipes.Clear(); // Clear existing recipes
 
                 foreach (RecipeDTO dto in recipesDTO)
                 {

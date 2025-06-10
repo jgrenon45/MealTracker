@@ -27,13 +27,16 @@
                        FontSize="42" 
                        HorizontalOptions="Start" 
                        VerticalOptions="End"/>
-                <Button ImageSource="edit.png" VerticalOptions="End" Command="{Binding ToggleEditModeCommand}"/>
+                <Button ImageSource="edit.png" 
+                        VerticalOptions="End" 
+                        Command="{Binding ToggleEditModeCommand}"
+                        IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"/>
             </HorizontalStackLayout>
 
             <!-- Times and Servings -->
             <HorizontalStackLayout VerticalOptions="Center" Grid.Row="1" Grid.Column="1" Spacing="10">
                 <Image Source="timer.png" HeightRequest="32"/>
-                <Entry Text="{Binding Recipe.PreparationTime}"
+                <Entry Text="{Binding Recipe.PreparationTime, Converter={StaticResource TimeSpanToStringConverter}}"
                        FontSize="24"
                        IsVisible="{Binding IsEditMode}"
                        WidthRequest="115"
@@ -51,7 +54,7 @@
                        WidthRequest="115"
                        Keyboard="Time"
                        VerticalOptions="Center"/>
-                <Label Text="{Binding Recipe.CookingTime}"
+                <Label Text="{Binding Recipe.CookingTime, Converter={StaticResource TimeSpanToStringConverter}}"
                        FontSize="24"
                        IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
                        VerticalOptions="Center"/>
@@ -79,10 +82,18 @@
 
             <!-- Tab Content: Ingredients -->
             <ContentView HorizontalOptions="Center" IsVisible="{Binding IsIngredientsVisible}">
-                <VerticalStackLayout VerticalOptions="Fill">
-                    <CollectionView ItemsSource="{Binding Recipe.Ingredients}"/>
+                <VerticalStackLayout WidthRequest="300">
+                    <CollectionView HeightRequest="200" ItemsSource="{Binding Recipe.Ingredients}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="{x:Type x:String}">
+                                <Border Padding="10">
+                                    <Label Text="{Binding Name}" VerticalOptions="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                     <Button Text="Add Ingredient" 
-                            Command="{Binding AddIngredientCommand}"
+                            Command="{Binding ShowIngredientsPopupCommand}"
                             IsVisible="{Binding IsEditMode}"/>
                 </VerticalStackLayout>
             </ContentView>
