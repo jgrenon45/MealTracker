@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,7 +12,7 @@ using System.Collections.ObjectModel;
 
 namespace MealTracker.ViewModels
 {
-    [QueryProperty(nameof(RecipeId), "RecipeId")]
+    [QueryProperty(nameof(CurrentRecipeId), "RecipeId")]
     [QueryProperty(nameof(IsEditMode), "IsEditMode")]
     public partial class RecipeDetailsViewModel : ObservableObject
     {
@@ -20,7 +21,7 @@ namespace MealTracker.ViewModels
         #region Properties
 
         [ObservableProperty]
-        private int recipeId;
+        private int currentRecipeId;
 
         [ObservableProperty]
         private Recipe recipe;
@@ -33,6 +34,8 @@ namespace MealTracker.ViewModels
 
         [ObservableProperty]
         private bool isEditMode = false;
+
+        public List<UnitType> UnitTypes { get; } = Enum.GetValues(typeof(UnitType)).Cast<UnitType>().ToList();
         #endregion
 
         public RecipeDetailsViewModel(SqliteConnectionFactory sqliteConnectionFactory)
@@ -40,7 +43,7 @@ namespace MealTracker.ViewModels
             this.sqliteConnectionFactory = sqliteConnectionFactory;
         }
 
-        partial void OnRecipeIdChanged(int value)
+        partial void OnCurrentRecipeIdChanged(int value)
         {
             LoadRecipeDetailsCommand.Execute(null); // Load recipe when RecipeId changes
         }
@@ -52,7 +55,8 @@ namespace MealTracker.ViewModels
             ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
             try
             {
-                RecipeDTO recipeDTO = await database.Table<RecipeDTO>().FirstOrDefaultAsync(r => r.Id == RecipeId);
+                RecipeDTO recipeDTO = await database.Table<RecipeDTO>().FirstOrDefaultAsync(r => r.Id == CurrentRecipeId);
+                recipeDTO.Ingredients = await database.Table<RecipeIngredientDTO>().Where(ri => ri.RecipeId == recipeDTO.Id).ToListAsync();
 
                 if (recipeDTO != null)
                 {
@@ -60,12 +64,30 @@ namespace MealTracker.ViewModels
                     (
                         recipeDTO.Id,
                         recipeDTO.Name,
-                        recipeDTO.Description,
                         recipeDTO.Instructions,
                         recipeDTO.PreparationTime,
                         recipeDTO.CookingTime,
                         recipeDTO.Servings
                     );
+
+                    foreach (RecipeIngredientDTO riDTO in recipeDTO.Ingredients)
+                    {
+                        riDTO.Ingredient = await database.Table<IngredientDTO>().FirstOrDefaultAsync(i => i.Id == riDTO.IngredientId);
+                        Recipe.Ingredients.Add(new RecipeIngredient
+                        (
+                            riDTO.Id,
+                            riDTO.RecipeId,
+                            riDTO.IngredientId,
+                            new Ingredient
+                            (
+                                riDTO.Ingredient.Id,
+                                riDTO.Ingredient.Name
+                            ),
+                            riDTO.Quantity,
+                            riDTO.Unit
+                        ));
+                    }
+
                 }
                 else
                 {
@@ -108,8 +130,9 @@ namespace MealTracker.ViewModels
         [RelayCommand]
         private async Task SaveRecipeAsync()
         {
-            ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
+            ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();            
 
+            //Save recipe
             RecipeDTO recipeDTO = new RecipeDTO
             {
                 Id = Recipe.Id,
@@ -125,11 +148,32 @@ namespace MealTracker.ViewModels
             {
                 var result = await database.UpdateAsync(recipeDTO);
 
-                if(result == 1)
+                //Delete old RecipeIngredientDTOs
+                var oldIngredients = await database.Table<RecipeIngredientDTO>()
+                    .Where(ri => ri.RecipeId == Recipe.Id)
+                    .ToListAsync();
+
+                foreach (var old in oldIngredients)
                 {
-                    await Shell.Current.CurrentPage.DisplayAlert("Recipe saved successfully!", recipeDTO.Name + " informations have been updated", "Back to recipes");
-                    await Shell.Current.GoToAsync(nameof(RecipesPage));
+                    await database.DeleteAsync(old);
                 }
+
+                //Insert updated RecipeIngredientDTOs
+                foreach (var ri in Recipe.Ingredients)
+                {
+                    var riDTO = new RecipeIngredientDTO
+                    {
+                        RecipeId = Recipe.Id,
+                        IngredientId = ri.IngredientId,
+                        Quantity = ri.Quantity,
+                        Unit = ri.UnitType
+                    };
+                    await database.InsertAsync(riDTO);
+                }
+               
+                await Shell.Current.CurrentPage.DisplayAlert("Recipe saved successfully!", recipeDTO.Name + " informations have been updated", "Back to recipes");
+                await Shell.Current.GoToAsync(nameof(RecipesPage));
+                
             }
             catch (Exception ex)
             {
@@ -184,13 +228,17 @@ namespace MealTracker.ViewModels
                 //Cast the object list to ingredient list
                 List<Ingredient> selectedIngredients = objectList.OfType<Ingredient>().ToList();
             
-                foreach (var ingredient in selectedIngredients)
+                foreach (Ingredient ingredient in selectedIngredients)
                 {
-                    Recipe.Ingredients.Add(ingredient);
-                }
-                
+                    RecipeIngredient ri = new RecipeIngredient
+                    (
+                        Recipe.Id,
+                        ingredient.Id,
+                        ingredient
+                    );
+                    Recipe.Ingredients.Add(ri);
+                }               
             }
-
         }
         #endregion
     }

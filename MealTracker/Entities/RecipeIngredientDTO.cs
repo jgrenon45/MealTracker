@@ -16,8 +16,11 @@ namespace MealTracker.Entities
 
         public int IngredientId { get; set; }
 
-        public decimal Quantity { get; set; }
+        public double Quantity { get; set; }
 
         public UnitType Unit { get; set; }
+
+        [Ignore]
+        public IngredientDTO? Ingredient { get; set; }
     }
 }

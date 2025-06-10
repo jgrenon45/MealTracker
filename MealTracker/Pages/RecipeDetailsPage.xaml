@@ -4,6 +4,7 @@
              x:Class="MealTracker.Pages.RecipeDetailsPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
+             xmlns:entities="clr-namespace:MealTracker.Entities"
              x:DataType="viewmodel:RecipeDetailsViewModel"
              Title="Recipe Details">
     <Grid RowDefinitions="*,*,Auto">
@@ -85,9 +86,15 @@
                 <VerticalStackLayout WidthRequest="300">
                     <CollectionView HeightRequest="200" ItemsSource="{Binding Recipe.Ingredients}">
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="{x:Type x:String}">
+                            <DataTemplate x:DataType="entities:RecipeIngredient">
                                 <Border Padding="10">
-                                    <Label Text="{Binding Name}" VerticalOptions="Center"/>
+                                    <HorizontalStackLayout Spacing="20">
+                                        <Entry Text="{Binding Quantity}" Keyboard="Numeric" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=IsEditMode}"/>
+                                        <Picker SelectedItem="{Binding UnitType}" ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=UnitTypes}" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=IsEditMode}"/>
+                                        <Label Text="{Binding Quantity}" VerticalOptions="Center" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=IsEditMode, Converter={StaticResource InverseBoolConverter}}"/>
+                                        <Label Text="{Binding UnitType}" VerticalOptions="Center" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=IsEditMode, Converter={StaticResource InverseBoolConverter}}"/>
+                                        <Label Text="{Binding Ingredient.Name}" VerticalOptions="Center"/>
+                                    </HorizontalStackLayout>
                                 </Border>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
