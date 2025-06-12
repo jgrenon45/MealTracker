@@ -17,6 +17,8 @@ namespace MealTracker.ViewModels
     {
         private readonly SqliteConnectionFactory sqliteConnectionFactory;
 
+        private Recipe currentRecipe;
+
         #region Properties
 
         [ObservableProperty]
@@ -26,9 +28,10 @@ namespace MealTracker.ViewModels
         private ObservableCollection<object> selectedIngredients = new ObservableCollection<object>();
         #endregion
 
-        public IngredientPickerViewModel(SqliteConnectionFactory sqliteConnectionFactory)
+        public IngredientPickerViewModel(SqliteConnectionFactory sqliteConnectionFactory, Recipe recipe)
         {
             this.sqliteConnectionFactory = sqliteConnectionFactory;
+            this.currentRecipe = recipe;
             LoadIngredientsCommand.Execute(null); // Load ingredients when the ViewModel is initialized 
         }
 
@@ -43,13 +46,20 @@ namespace MealTracker.ViewModels
             {
                 List<IngredientDTO> ingredientDTOs = await database.Table<IngredientDTO>().ToListAsync();
                 Ingredients.Clear(); // Clear existing ingredients
+                SelectedIngredients.Clear(); // Clear selected ingredients
                 foreach (var dto in ingredientDTOs)
                 {
-                    Ingredients.Add(new Ingredient
+                    Ingredient ingredient = new Ingredient
                     (
                         dto.Id,
                         dto.Name
-                    ));
+                    );
+                    Ingredients.Add(ingredient);
+                    
+                    if(currentRecipe.Ingredients.Any(i=>i.IngredientId == ingredient.Id))
+                    {
+                        SelectedIngredients.Add(ingredient);
+                    }
                 }
             }
             catch (Exception ex)

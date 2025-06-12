@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using MealTracker.Database;
 using MealTracker.Entities;
 using MealTracker.Pages;
+using Microsoft.VisualBasic.FileIO;
 using SQLite;
 using System.Collections.ObjectModel;
 
@@ -219,7 +220,7 @@ namespace MealTracker.ViewModels
         [RelayCommand]
         private async Task ShowIngredientsPopupAsync()
         {            
-            var popup = new IngredientPicker(new IngredientPickerViewModel(sqliteConnectionFactory));
+            var popup = new IngredientPicker(new IngredientPickerViewModel(sqliteConnectionFactory, Recipe));
 
             var result = await Shell.Current.CurrentPage.ShowPopupAsync(popup);
 
@@ -228,6 +229,8 @@ namespace MealTracker.ViewModels
                 //Cast the object list to ingredient list
                 List<Ingredient> selectedIngredients = objectList.OfType<Ingredient>().ToList();
             
+                Recipe.Ingredients.Clear(); // Clear existing ingredients so only the ones selected in the popup are added
+
                 foreach (Ingredient ingredient in selectedIngredients)
                 {
                     RecipeIngredient ri = new RecipeIngredient
