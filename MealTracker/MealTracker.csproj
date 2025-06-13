@@ -61,6 +61,7 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Images\Icons\add.svg" />
+	  <None Remove="Resources\Images\Icons\close.svg" />
 	  <None Remove="Resources\Images\Icons\cooking.svg" />
 	  <None Remove="Resources\Images\Icons\edit.svg" />
 	  <None Remove="Resources\Images\Icons\save.svg" />
@@ -70,6 +71,8 @@
 
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\Icons\add.svg" />
+	  <MauiImage Include="Resources\Images\Icons\close.svg" />
+	  <MauiImage Include="Resources\Images\Icons\delete.svg" />
 	  <MauiImage Include="Resources\Images\Icons\save.svg" />
 	</ItemGroup>
 

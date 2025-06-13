@@ -280,7 +280,7 @@ namespace MealTracker.ViewModels
         }
 
         [RelayCommand]
-        private async Task AddInstructionAsync()
+        private void AddInstruction()
         {
             Instruction newInstruction = new Instruction
             (
@@ -288,6 +288,21 @@ namespace MealTracker.ViewModels
                 Recipe.Instructions.Count() + 1
             );
             Recipe.Instructions.Add(newInstruction);
+        }
+
+        [RelayCommand]
+        private void DeleteInstruction(Instruction instruction)
+        {
+            if (Recipe.Instructions.Contains(instruction))
+            {
+                Recipe.Instructions.Remove(instruction);
+
+                // Reorder remaining instructions
+                for (int i = 0; i < Recipe.Instructions.Count; i++)
+                {
+                    Recipe.Instructions[i].Order = i + 1;
+                }
+            }
         }
         #endregion
     }
