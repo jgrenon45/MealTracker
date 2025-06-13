@@ -20,7 +20,7 @@ namespace MealTracker.Entities
         [Ignore]
         public List<RecipeIngredientDTO> Ingredients { get; set; }
 
-        public string? Instructions { get; set; }
+        public List<InstructionDTO> Instructions { get; set; }
 
         public TimeSpan PreparationTime { get; set; }
 

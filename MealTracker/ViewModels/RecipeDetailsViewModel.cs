@@ -58,6 +58,7 @@ namespace MealTracker.ViewModels
             {
                 RecipeDTO recipeDTO = await database.Table<RecipeDTO>().FirstOrDefaultAsync(r => r.Id == CurrentRecipeId);
                 recipeDTO.Ingredients = await database.Table<RecipeIngredientDTO>().Where(ri => ri.RecipeId == recipeDTO.Id).ToListAsync();
+                recipeDTO.Instructions = await database.Table<InstructionDTO>().Where(i => i.RecipeId == recipeDTO.Id).ToListAsync();
 
                 if (recipeDTO != null)
                 {
@@ -65,7 +66,6 @@ namespace MealTracker.ViewModels
                     (
                         recipeDTO.Id,
                         recipeDTO.Name,
-                        recipeDTO.Instructions,
                         recipeDTO.PreparationTime,
                         recipeDTO.CookingTime,
                         recipeDTO.Servings
@@ -87,6 +87,19 @@ namespace MealTracker.ViewModels
                             riDTO.Quantity,
                             riDTO.Unit
                         ));
+                    }
+
+                    foreach (InstructionDTO ingredientDTO in recipeDTO.Instructions)
+                    {                       
+                        Recipe.Instructions.Add(new Instruction
+                        (
+                            ingredientDTO.Id,
+                            ingredientDTO.Description,
+                            ingredientDTO.Order,
+                            ingredientDTO.EstimatedTime,
+                            ingredientDTO.IsCompleted
+                        ));
+                        Recipe.Instructions.ToList().Sort((x, y) => x.Order.CompareTo(y.Order)); // Sort instructions by order
                     }
 
                 }
@@ -139,7 +152,6 @@ namespace MealTracker.ViewModels
                 Id = Recipe.Id,
                 Name = Recipe.Name,
                 Description = Recipe.Description,
-                Instructions = Recipe.Instructions,
                 PreparationTime = Recipe.PreparationTime,
                 CookingTime = Recipe.CookingTime,
                 Servings = Recipe.Servings
@@ -154,7 +166,17 @@ namespace MealTracker.ViewModels
                     .Where(ri => ri.RecipeId == Recipe.Id)
                     .ToListAsync();
 
+                //Delete old InstructionsDTOs
+                var oldInstructions = await database.Table<InstructionDTO>()
+                    .Where(i => i.RecipeId == Recipe.Id)
+                    .ToListAsync();
+
                 foreach (var old in oldIngredients)
+                {
+                    await database.DeleteAsync(old);
+                }
+
+                foreach (var old in oldInstructions)
                 {
                     await database.DeleteAsync(old);
                 }
@@ -171,7 +193,20 @@ namespace MealTracker.ViewModels
                     };
                     await database.InsertAsync(riDTO);
                 }
-               
+
+                foreach (var instruction in Recipe.Instructions)
+                {
+                    var instructionDTO = new InstructionDTO
+                    {                     
+                        RecipeId = Recipe.Id,
+                        Description = instruction.Description,
+                        Order = instruction.Order,
+                        EstimatedTime = instruction.EstimatedTime,
+                        IsCompleted = instruction.IsCompleted
+                    };
+                    await database.InsertAsync(instructionDTO);
+                }
+
                 await Shell.Current.CurrentPage.DisplayAlert("Recipe saved successfully!", recipeDTO.Name + " informations have been updated", "Back to recipes");
                 await Shell.Current.GoToAsync(nameof(RecipesPage));
                 
@@ -242,6 +277,17 @@ namespace MealTracker.ViewModels
                     Recipe.Ingredients.Add(ri);
                 }               
             }
+        }
+
+        [RelayCommand]
+        private async Task AddInstructionAsync()
+        {
+            Instruction newInstruction = new Instruction
+            (
+                String.Empty, // Default empty instruction text
+                Recipe.Instructions.Count() + 1
+            );
+            Recipe.Instructions.Add(newInstruction);
         }
         #endregion
     }

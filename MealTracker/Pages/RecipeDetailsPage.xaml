@@ -83,11 +83,11 @@
 
             <!-- Tab Content: Ingredients -->
             <ContentView HorizontalOptions="Center" IsVisible="{Binding IsIngredientsVisible}">
-                <VerticalStackLayout WidthRequest="200">
+                <VerticalStackLayout WidthRequest="300">
                     <CollectionView HeightRequest="200" ItemsSource="{Binding Recipe.Ingredients}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="entities:RecipeIngredient">
-                                <Border Padding="10">
+                                <Border>
                                     <HorizontalStackLayout Spacing="20">
                                         <Entry Text="{Binding Quantity}" Keyboard="Numeric" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=IsEditMode}"/>
                                         <Picker SelectedItem="{Binding UnitType, Mode=TwoWay}" ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=UnitTypes}" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=IsEditMode}"/>
@@ -107,16 +107,30 @@
 
             <!-- Tab Content: Instructions -->
             <ContentView HorizontalOptions="Center" IsVisible="{Binding IsInstructionsVisible}">
-                <VerticalStackLayout>
-                    <Editor Text="{Binding Recipe.Instructions}"
-                        AutoSize="TextChanges"
-                        IsVisible="{Binding IsEditMode}"
-                        WidthRequest="300"
-                        Placeholder="Enter instructions..." />
-
-                    <Label Text="{Binding Recipe.Instructions}"
-                       IsVisible="{Binding IsEditMode, Converter={StaticResource InverseBoolConverter}}"
-                       WidthRequest="300" />
+                <VerticalStackLayout WidthRequest="300">
+                    <CollectionView HeightRequest="200" ItemsSource="{Binding Recipe.Instructions}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="entities:Instruction">
+                                <Border>
+                                    <Grid Margin="10,5,5,5" ColumnSpacing="10" ColumnDefinitions="Auto,*">
+                                        <Label Text="{Binding Order}"
+                                               VerticalOptions="Center"
+                                               Grid.Column="0"/>
+                                        <Label Text="{Binding Description}"
+                                               IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=IsEditMode, Converter={StaticResource InverseBoolConverter}}"
+                                               Grid.Column="1"/>
+                                        <Editor Text="{Binding Description}"
+                                                IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipeDetailsViewModel}}, Path=IsEditMode}"
+                                                Grid.Column="1"
+                                                VerticalTextAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <Button Text="Add Instruction" 
+                        Command="{Binding AddInstructionCommand}"
+                        IsVisible="{Binding IsEditMode}"/>
                 </VerticalStackLayout>
             </ContentView>
         </VerticalStackLayout>

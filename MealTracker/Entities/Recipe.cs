@@ -22,7 +22,7 @@ namespace MealTracker.Entities
         public ObservableCollection<RecipeIngredient> ingredients = new ObservableCollection<RecipeIngredient>();
 
         [ObservableProperty]
-        public string? instructions;
+        public ObservableCollection<Instruction> instructions = new ObservableCollection<Instruction>();
 
         [ObservableProperty]
         public TimeSpan preparationTime;
@@ -41,11 +41,10 @@ namespace MealTracker.Entities
         }
 
         //Full constructor for detailed recipe creation
-        public Recipe(int id, string name, string instructions, TimeSpan preparationTime, TimeSpan cookingTime, int servings)
+        public Recipe(int id, string name, TimeSpan preparationTime, TimeSpan cookingTime, int servings)
         {
             Id = id;
             Name = name;
-            Instructions = instructions;
             PreparationTime = preparationTime;
             CookingTime = cookingTime;
             Servings = servings;
