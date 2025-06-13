@@ -17,8 +17,13 @@ public partial class IngredientPicker : Popup
 		BindingContext = viewModel;
     }
 
-    private void CloseButton_Clicked(object sender, EventArgs e)
+    private void AddIngredientsButton_Clicked(object sender, EventArgs e)
     {
         Close(viewModel.SelectedIngredients);
+    }
+
+    private void CloseButton_Clicked(object sender, EventArgs e)
+    {
+        Close();
     }
 }

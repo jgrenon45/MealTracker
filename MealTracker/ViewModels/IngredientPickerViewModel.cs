@@ -25,7 +25,13 @@ namespace MealTracker.ViewModels
         private ObservableCollection<Ingredient> ingredients = new ObservableCollection<Ingredient>();
 
         [ObservableProperty]
+        private ObservableCollection<Ingredient> filteredIngredients = new ObservableCollection<Ingredient>();
+
+        [ObservableProperty]
         private ObservableCollection<object> selectedIngredients = new ObservableCollection<object>();
+
+        [ObservableProperty]
+        private string ingredientSearchText = string.Empty;
         #endregion
 
         public IngredientPickerViewModel(SqliteConnectionFactory sqliteConnectionFactory, Recipe recipe)
@@ -35,6 +41,10 @@ namespace MealTracker.ViewModels
             LoadIngredientsCommand.Execute(null); // Load ingredients when the ViewModel is initialized 
         }
 
+        partial void OnIngredientSearchTextChanged(string oldValue, string newValue)
+        {
+            FilterIngredients();
+        }
 
         #region Commands
         [RelayCommand]
@@ -61,6 +71,7 @@ namespace MealTracker.ViewModels
                         SelectedIngredients.Add(ingredient);
                     }
                 }
+                FilterIngredientsCommand.Execute(null); // Initialize filtered ingredients
             }
             catch (Exception ex)
             {
@@ -104,6 +115,28 @@ namespace MealTracker.ViewModels
                     ingredientDTO.Id,
                     ingredientDTO.Name
                 ));
+            }
+        }
+
+        [RelayCommand]
+        private void FilterIngredients()
+        {
+            FilteredIngredients.Clear();
+
+            var query = IngredientSearchText?.Trim() ?? "";
+
+            var results = string.IsNullOrWhiteSpace(query)
+                ? Ingredients
+                : Ingredients
+                    .Where(i => i.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+
+            foreach (Ingredient item in results)
+            {
+                FilteredIngredients.Add(item);
+                if (currentRecipe.Ingredients.Any(i => i.IngredientId == item.Id))
+                {
+                    SelectedIngredients.Add(item);
+                }
             }
         }
 

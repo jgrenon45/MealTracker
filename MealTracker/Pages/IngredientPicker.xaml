@@ -9,17 +9,24 @@
                CanBeDismissedByTappingOutsideOfPopup="False">
     <Grid Padding="10" 
           BackgroundColor="Grey" 
-          RowDefinitions="Auto,Auto,*,Auto"
-          ColumnDefinitions="*,0.2*"
+          RowDefinitions="Auto,Auto,Auto,*,Auto"
+          ColumnDefinitions="*,*"
           HeightRequest="300"
           WidthRequest="300">
-        <Label Grid.Row="0" VerticalOptions="Center" Text="Select an ingredient:" FontAttributes="Bold"/>
-        <Button Grid.Column="1" ImageSource="add.png"  Command="{Binding CreateIngredientCommand}" HorizontalOptions="End"/>
-        <Entry Grid.ColumnSpan="2" Grid.Row="1" Placeholder="Search..."/>
-        <CollectionView ItemsSource="{Binding Ingredients}" 
+        <HorizontalStackLayout Spacing="10" HorizontalOptions="End" Grid.Row="0" Grid.Column="1">
+            <Button HeightRequest="10" WidthRequest="10" ImageSource="add.png"  Command="{Binding CreateIngredientCommand}"/>
+            <Button HeightRequest="10" WidthRequest="10" ImageSource="close.png" Clicked="CloseButton_Clicked"/>
+        </HorizontalStackLayout>
+        <Label Grid.Row="1" Grid.Column="0" VerticalOptions="Center" Text="Select an ingredient:" FontAttributes="Bold"/>
+        <SearchBar Grid.ColumnSpan="2" 
+                   Grid.Row="2" 
+                   Placeholder="Search..."
+                   Text="{Binding IngredientSearchText}"
+                   SearchCommand="{Binding FilterIngredientsCommand}"/>
+        <CollectionView ItemsSource="{Binding FilteredIngredients}" 
                         SelectedItems="{Binding SelectedIngredients, Mode=TwoWay}" 
                         SelectionMode="Multiple"
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Grid.ColumnSpan="2">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="entities:Ingredient">
@@ -28,8 +35,8 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
         <Button Grid.ColumnSpan="2" 
-                Grid.Row="3" 
+                Grid.Row="4" 
                 Text="Add Selected"
-                Clicked="CloseButton_Clicked"/>
+                Clicked="AddIngredientsButton_Clicked"/>
     </Grid>
 </toolkit:Popup>
