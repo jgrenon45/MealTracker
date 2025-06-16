@@ -53,7 +53,8 @@ namespace MealTracker.ViewModels
                     Recipes.Add(new Recipe
                     (
                         dto.Id,
-                        dto.Name
+                        dto.Name,
+                        dto.ImagePath
                     ));
                 }
             }
@@ -111,17 +112,7 @@ namespace MealTracker.ViewModels
                         "Delete", $"Delete {recipe.Name}?", "Yes", "No");
                     if (confirm)
                     {
-                        ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
-
-                        RecipeDTO recipeDTO = new RecipeDTO
-                        {
-                            Id = recipe.Id,
-                            Name = recipe.Name
-                        };
-
-                        await database.DeleteAsync(recipeDTO);
-
-                        Recipes.Remove(recipe);
+                        DeleteRecipeCommand.Execute(recipe);
                     }
                     break;
             }
@@ -134,6 +125,24 @@ namespace MealTracker.ViewModels
                 return;
 
             await Shell.Current.GoToAsync($"{nameof(RecipeDetailsPage)}?RecipeId={recipe.Id}&IsEditMode={false}");
+        }
+
+        [RelayCommand]
+        private async Task DeleteRecipeAsync(Recipe recipe)
+        {
+            ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
+
+            RecipeDTO recipeDTO = new RecipeDTO
+            {
+                Id = recipe.Id,
+                Name = recipe.Name,
+            };
+
+            await database.DeleteAsync(recipeDTO);
+
+            recipe.DeleteOldImageFile(recipe.ImagePath); // Delete the old image file if it exists
+
+            Recipes.Remove(recipe);
         }
         #endregion
     }

@@ -12,7 +12,15 @@
         <Grid Grid.Row="0"
               RowDefinitions="*,*"
               ColumnDefinitions="*,*">
-            <Image Source="pie_placeholder.png" Grid.Column="0" Grid.RowSpan="2"/>
+            <Grid Grid.Column="0" 
+                  Grid.RowSpan="2"
+                  RowDefinitions="*, Auto">
+                <Image Grid.Row="0" MaximumHeightRequest="285" Source="{Binding SelectedImagePath}"/>
+                <Button Grid.Row="1" 
+                        Text="Choose Image"
+                        Command="{Binding ChooseImageCommand}"
+                        IsVisible="{Binding IsEditMode}"/>
+            </Grid>
             
             <!-- Recipe Name + Edit Button -->
             <HorizontalStackLayout Grid.Row="0"

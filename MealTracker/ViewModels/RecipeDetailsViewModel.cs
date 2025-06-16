@@ -1,15 +1,11 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Core.Extensions;
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MealTracker.Database;
 using MealTracker.Entities;
 using MealTracker.Pages;
-using Microsoft.VisualBasic.FileIO;
 using SQLite;
-using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MealTracker.ViewModels
 {
@@ -35,6 +31,9 @@ namespace MealTracker.ViewModels
 
         [ObservableProperty]
         private bool isEditMode = false;
+
+        [ObservableProperty]
+        private string selectedImagePath;
 
         public List<UnitType> UnitTypes { get; } = Enum.GetValues(typeof(UnitType)).Cast<UnitType>().ToList();
         #endregion
@@ -66,10 +65,13 @@ namespace MealTracker.ViewModels
                     (
                         recipeDTO.Id,
                         recipeDTO.Name,
+                        recipeDTO.ImagePath,
                         recipeDTO.PreparationTime,
                         recipeDTO.CookingTime,
                         recipeDTO.Servings
                     );
+
+                    SelectedImagePath = Recipe.ImagePath; // Set the selected image path for editing
 
                     foreach (RecipeIngredientDTO riDTO in recipeDTO.Ingredients)
                     {
@@ -144,13 +146,35 @@ namespace MealTracker.ViewModels
         [RelayCommand]
         private async Task SaveRecipeAsync()
         {
-            ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();            
+            ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
+
+            // If a new image was picked
+            if (!string.IsNullOrWhiteSpace(SelectedImagePath) && File.Exists(SelectedImagePath))
+            {
+                // Delete old image if replacing
+                if (!string.IsNullOrWhiteSpace(Recipe.ImagePath) && File.Exists(Recipe.ImagePath))
+                {
+                    File.Delete(Recipe.ImagePath);
+                }
+
+                // Generate a unique filename in AppDataDirectory
+                string extension = Path.GetExtension(SelectedImagePath);
+                string uniqueName = $"{Guid.NewGuid()}{extension}";
+                string destPath = Path.Combine(FileSystem.AppDataDirectory, uniqueName);
+
+                // Copy the image to permanent location
+                File.Copy(SelectedImagePath, destPath);
+
+                // Assign and clear temp
+                Recipe.ImagePath = destPath;
+            }
 
             //Save recipe
             RecipeDTO recipeDTO = new RecipeDTO
             {
                 Id = Recipe.Id,
                 Name = Recipe.Name,
+                ImagePath = Recipe.ImagePath,
                 Description = Recipe.Description,
                 PreparationTime = Recipe.PreparationTime,
                 CookingTime = Recipe.CookingTime,
@@ -302,6 +326,27 @@ namespace MealTracker.ViewModels
                 {
                     Recipe.Instructions[i].Order = i + 1;
                 }
+            }
+        }
+
+        [RelayCommand]
+        private async Task ChooseImageAsync()
+        {            
+            var result = await FilePicker.PickAsync(new PickOptions
+            {
+                PickerTitle = "Select a recipe image",
+                FileTypes = FilePickerFileType.Images // built-in support for PNG, JPG, etc.
+            });
+
+            if (result != null)
+            {
+                string tempPath = Path.Combine(FileSystem.CacheDirectory, result.FileName);
+                using var stream = await result.OpenReadAsync();
+                using var fileStream = File.OpenWrite(tempPath);
+                await stream.CopyToAsync(fileStream);
+
+                SelectedImagePath = tempPath;
+
             }
         }
         #endregion

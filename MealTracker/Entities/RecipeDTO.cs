@@ -17,9 +17,12 @@ namespace MealTracker.Entities
 
         public string? Description { get; set; }
 
+        public string ImagePath { get; set; }
+
         [Ignore]
         public List<RecipeIngredientDTO> Ingredients { get; set; }
 
+        [Ignore]
         public List<InstructionDTO> Instructions { get; set; }
 
         public TimeSpan PreparationTime { get; set; }
