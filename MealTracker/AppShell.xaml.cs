@@ -10,6 +10,7 @@ namespace MealTracker
 
             Routing.RegisterRoute(nameof(RecipesPage), typeof(RecipesPage));
             Routing.RegisterRoute(nameof(RecipeDetailsPage), typeof(RecipeDetailsPage));
+            Routing.RegisterRoute(nameof(GroceriesPage), typeof(GroceriesPage));
         }
     }
 }

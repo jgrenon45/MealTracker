@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using MealTracker.Database;
 using MealTracker.Entities;
+using MealTracker.Pages;
 using SQLite;
-using System.Collections.ObjectModel;
 
 namespace MealTracker.ViewModels
 {

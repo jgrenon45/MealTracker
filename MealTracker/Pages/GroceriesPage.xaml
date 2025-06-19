@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MealTracker.Pages.GroceriesPage"
+             xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
+             xmlns:entities="clr-namespace:MealTracker.Entities"
+             x:DataType="viewmodel:GroceriesViewModel"
+             Title="Groceries">
+    <Grid RowDefinitions="Auto, Auto, *"
+              Margin="20">
+            <CollectionView ItemsSource="{Binding GroceryItems}" 
+                            SelectionMode="None"
+                            Grid.Row="0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="entities:GroceryItem">
+                        <Border>
+                            <HorizontalStackLayout Spacing="20">
+                                <CheckBox IsChecked="{Binding IsChecked}"/>
+                                <Entry Text="{Binding Quantity}" 
+                                       Keyboard="Numeric"
+                                       VerticalOptions="Center" 
+                                       HorizontalOptions="Center"
+                                       IsEnabled="{Binding IsChecked, Converter={StaticResource InverseBoolConverter}}"/>
+                                <Picker SelectedItem="{Binding UnitType, Mode=TwoWay}" 
+                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:GroceriesViewModel}}, Path=UnitTypes}"
+                                        IsEnabled="{Binding IsChecked, Converter={StaticResource InverseBoolConverter}}"/>
+                                <Label Text="{Binding Ingredient.Name}" 
+                                       VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button ImageSource="add.png"
+                    Command="{Binding AddGroceryItemCommand}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="End"
+                    Grid.Row="1"/>
+            <Button Text="Clear List"
+                    Command="{Binding ClearListCommand}"
+                    HorizontalOptions="End"
+                    VerticalOptions="End"
+                    Grid.Row="3"/>
+    </Grid>
+</ContentPage>

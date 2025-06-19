@@ -24,17 +24,17 @@ namespace MealTracker
 
             builder.Services.AddSingleton<SqliteConnectionFactory>();
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<MainViewModel>();
-
-            builder.Services.AddTransient<RecipesPage>();
-            builder.Services.AddTransient<RecipesViewModel>();
+            builder.Services.AddSingleton<RecipesPage>();
+            builder.Services.AddSingleton<RecipesViewModel>();
 
             builder.Services.AddTransient<RecipeDetailsPage>();
             builder.Services.AddTransient<RecipeDetailsViewModel>();
 
             builder.Services.AddTransient<IngredientPicker>();
             builder.Services.AddTransient<IngredientPickerViewModel>();
+
+            builder.Services.AddTransient<GroceriesPage>();
+            builder.Services.AddTransient<GroceriesViewModel>();
 
 #if DEBUG
 #endif

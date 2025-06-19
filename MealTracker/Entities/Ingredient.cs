@@ -11,9 +11,11 @@ namespace MealTracker.Entities
     {
         Grams,
         Kilograms,
+        Lbs,
         Milliliters,
         Liters,
-        Pieces,
+        Units,
+        Packs,
         Tablespoons,
         Teaspoons,
         Cups
@@ -25,6 +27,9 @@ namespace MealTracker.Entities
         
         [ObservableProperty]
         public string name;
+
+        [ObservableProperty]
+        public bool isNeeded;
 
         // Simple constructor for basic ingredient creation
         public Ingredient(int id, string name)

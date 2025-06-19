@@ -1,6 +1,6 @@
 using MealTracker.ViewModels;
 
-namespace MealTracker;
+namespace MealTracker.Pages;
 
 public partial class RecipesPage : ContentPage
 {

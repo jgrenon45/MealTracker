@@ -34,11 +34,17 @@ namespace MealTracker.ViewModels
         private string ingredientSearchText = string.Empty;
         #endregion
 
+        public IngredientPickerViewModel(SqliteConnectionFactory sqliteConnectionFactory)
+        {
+            this.sqliteConnectionFactory = sqliteConnectionFactory;
+            LoadIngredientsCommand.Execute(null); // Load ingredients when the ViewModel is initialized 
+        }
+
         public IngredientPickerViewModel(SqliteConnectionFactory sqliteConnectionFactory, Recipe recipe)
         {
             this.sqliteConnectionFactory = sqliteConnectionFactory;
             this.currentRecipe = recipe;
-            LoadIngredientsCommand.Execute(null); // Load ingredients when the ViewModel is initialized 
+            LoadIngredientsFromRecipeCommand.Execute(currentRecipe.Ingredients); // Load ingredients with Recipe's ingredients when the ViewModel is initialized 
         }
 
         partial void OnIngredientSearchTextChanged(string oldValue, string newValue)
@@ -47,8 +53,49 @@ namespace MealTracker.ViewModels
         }
 
         #region Commands
+
         [RelayCommand]
         private async Task LoadIngredientsAsync()
+        {
+            ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
+
+            try
+            {
+                List<IngredientDTO> ingredientDTOs = await database.Table<IngredientDTO>().ToListAsync();
+                Ingredients.Clear(); // Clear existing ingredients
+                foreach (var dto in ingredientDTOs)
+                {
+                    Ingredient ingredient = new Ingredient
+                    (
+                        dto.Id,
+                        dto.Name
+                    );
+                    Ingredients.Add(ingredient);                    
+                }
+                FilterIngredientsCommand.Execute(null); // Initialize filtered ingredients
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during data retrieval
+                var popup = new Popup
+                {
+                    Content = new VerticalStackLayout
+                    {
+                        Children =
+                        {
+                            new Label
+                            {
+                                Text = $"Error loading ingredients : {ex.Message}"
+                            }
+                        }
+                    }
+                };
+                Shell.Current.CurrentPage.ShowPopup(popup);
+            }
+        }
+
+        [RelayCommand]
+        private async Task LoadIngredientsFromRecipeAsync(ObservableCollection<RecipeIngredient> recipeIngredients)
         {
             ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
 
@@ -66,7 +113,7 @@ namespace MealTracker.ViewModels
                     );
                     Ingredients.Add(ingredient);
                     
-                    if(currentRecipe.Ingredients.Any(i=>i.IngredientId == ingredient.Id))
+                    if(recipeIngredients.Any(i=>i.IngredientId == ingredient.Id))
                     {
                         SelectedIngredients.Add(ingredient);
                     }
@@ -115,6 +162,8 @@ namespace MealTracker.ViewModels
                     ingredientDTO.Id,
                     ingredientDTO.Name
                 ));
+
+                FilterIngredientsCommand.Execute(null); // Initialize filtered ingredients
             }
         }
 
@@ -133,9 +182,12 @@ namespace MealTracker.ViewModels
             foreach (Ingredient item in results)
             {
                 FilteredIngredients.Add(item);
-                if (currentRecipe.Ingredients.Any(i => i.IngredientId == item.Id))
+                if(currentRecipe != null)
                 {
-                    SelectedIngredients.Add(item);
+                    if (currentRecipe.Ingredients.Any(i => i.IngredientId == item.Id))
+                    {
+                        SelectedIngredients.Add(item);
+                    }
                 }
             }
         }

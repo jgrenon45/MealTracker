@@ -30,6 +30,7 @@ namespace MealTracker
                 await database.CreateTableAsync<IngredientDTO>(); // Ensure the Ingredient table is created on startup
                 await database.CreateTableAsync<RecipeIngredientDTO>(); // Ensure the RecipeIngredient table is created on startup
                 await database.CreateTableAsync<InstructionDTO>(); // Ensure the Instruction table is created on startup
+                await database.CreateTableAsync<GroceryItemDTO>(); // Ensure the GroceryItem table is created on startup
             }
             catch (Exception ex)
             {
