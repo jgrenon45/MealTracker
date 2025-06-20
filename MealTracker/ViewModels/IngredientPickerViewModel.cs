@@ -19,6 +19,8 @@ namespace MealTracker.ViewModels
 
         private Recipe currentRecipe;
 
+        private ObservableCollection<GroceryItem> groceryItems = new ObservableCollection<GroceryItem>();
+
         #region Properties
 
         [ObservableProperty]
@@ -34,9 +36,10 @@ namespace MealTracker.ViewModels
         private string ingredientSearchText = string.Empty;
         #endregion
 
-        public IngredientPickerViewModel(SqliteConnectionFactory sqliteConnectionFactory)
+        public IngredientPickerViewModel(SqliteConnectionFactory sqliteConnectionFactory, ObservableCollection<GroceryItem> items)
         {
             this.sqliteConnectionFactory = sqliteConnectionFactory;
+            groceryItems = items;
             LoadIngredientsCommand.Execute(null); // Load ingredients when the ViewModel is initialized 
         }
 
@@ -184,13 +187,21 @@ namespace MealTracker.ViewModels
                 FilteredIngredients.Add(item);
                 if(currentRecipe != null)
                 {
-                    if (currentRecipe.Ingredients.Any(i => i.IngredientId == item.Id))
+                    if(currentRecipe.Ingredients.Any(i => i.IngredientId == item.Id))
+                    {
+                        SelectedIngredients.Add(item);
+                    }
+                }
+                else
+                {
+                    if(groceryItems.Any(i => i.IngredientId == item.Id))
                     {
                         SelectedIngredients.Add(item);
                     }
                 }
             }
         }
+
 
         #endregion
 

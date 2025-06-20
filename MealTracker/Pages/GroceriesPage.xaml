@@ -6,40 +6,43 @@
              xmlns:entities="clr-namespace:MealTracker.Entities"
              x:DataType="viewmodel:GroceriesViewModel"
              Title="Groceries">
-    <Grid RowDefinitions="Auto, Auto, *"
-              Margin="20">
+    <Grid Margin="10">
+        <!-- Main content Grid: CollectionView + Add button -->
+        <Grid RowDefinitions="*, Auto">
             <CollectionView ItemsSource="{Binding GroceryItems}" 
-                            SelectionMode="None"
-                            Grid.Row="0">
+                    SelectionMode="None"
+                    Grid.Row="0">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="entities:GroceryItem">
                         <Border>
-                            <HorizontalStackLayout Spacing="20">
-                                <CheckBox IsChecked="{Binding IsChecked}"/>
-                                <Entry Text="{Binding Quantity}" 
-                                       Keyboard="Numeric"
-                                       VerticalOptions="Center" 
-                                       HorizontalOptions="Center"
-                                       IsEnabled="{Binding IsChecked, Converter={StaticResource InverseBoolConverter}}"/>
-                                <Picker SelectedItem="{Binding UnitType, Mode=TwoWay}" 
-                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:GroceriesViewModel}}, Path=UnitTypes}"
-                                        IsEnabled="{Binding IsChecked, Converter={StaticResource InverseBoolConverter}}"/>
-                                <Label Text="{Binding Ingredient.Name}" 
-                                       VerticalOptions="Center"/>
-                            </HorizontalStackLayout>
+                            <Grid Margin="10" ColumnDefinitions="Auto,Auto,*">
+                                <CheckBox Grid.Column="0" IsChecked="{Binding IsChecked}"/>
+                                <Label Grid.Column="1" Text="{Binding Ingredient.Name}" VerticalOptions="Center"/>
+                                <Button ImageSource="delete.png"
+                      Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:GroceriesViewModel}}, Path=DeleteGroceryItemCommand}"
+                      CommandParameter="{Binding .}"
+                      Grid.Column="2"
+                      HorizontalOptions="End"/>
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+
             <Button ImageSource="add.png"
-                    Command="{Binding AddGroceryItemCommand}"
-                    HorizontalOptions="Center"
-                    VerticalOptions="End"
-                    Grid.Row="1"/>
-            <Button Text="Clear List"
-                    Command="{Binding ClearListCommand}"
-                    HorizontalOptions="End"
-                    VerticalOptions="End"
-                    Grid.Row="3"/>
+            Command="{Binding AddGroceryItemCommand}"
+            HorizontalOptions="Center"
+            VerticalOptions="Start"
+            Grid.Row="1"
+            Margin="10"/>
+        </Grid>
+
+        <!-- Clear button positioned absolutely -->
+        <Button Text="Clear List"
+          Command="{Binding ClearListCommand}"
+          HorizontalOptions="End"
+          VerticalOptions="End"
+          Margin="10"
+          IsVisible="{Binding GroceryItems.Count, Converter={StaticResource GreaterThanZeroConverter}}"/>
     </Grid>
 </ContentPage>
