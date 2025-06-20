@@ -3,6 +3,7 @@ using MealTracker.Database;
 using MealTracker.Pages;
 using MealTracker.ViewModels;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace MealTracker
 {
@@ -14,6 +15,8 @@ namespace MealTracker
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
+                // Initialize the Syncfusion .NET MAUI Toolkit by adding the below line of code
+                .ConfigureSyncfusionToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
