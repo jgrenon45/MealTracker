@@ -30,5 +30,7 @@ namespace MealTracker.Entities
         public TimeSpan CookingTime { get; set; }
 
         public int Servings { get; set; }
+
+        public bool IsFavorite { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace MealTracker.ViewModels
 
         partial void OnIngredientSearchTextChanged(string oldValue, string newValue)
         {
-            FilterIngredients();
+            FilterIngredientsCommand.Execute(null);
         }
 
         #region Commands

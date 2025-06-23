@@ -71,6 +71,10 @@
 
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\Icons\add.svg" />
+	  <MauiImage Include="Resources\Images\Icons\favorite_fill.svg" />
+	  <MauiImage Include="Resources\Images\Icons\favorite_border.svg" />
+	  <MauiImage Include="Resources\Images\Icons\grocery.svg" />
+	  <MauiImage Include="Resources\Images\Icons\recipe.svg" />
 	  <MauiImage Include="Resources\Images\Icons\close.svg" />
 	  <MauiImage Include="Resources\Images\Icons\delete.svg" />
 	  <MauiImage Include="Resources\Images\Icons\save.svg" />

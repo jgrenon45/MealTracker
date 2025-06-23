@@ -7,12 +7,12 @@
     Title="MealTracker">
     <TabBar>
         <Tab Title="Recipes"
-             Icon="cooking.png">
-            <ShellContent ContentTemplate="{DataTemplate pages:RecipesPage}" Route="RecipesPage"/>
+             Icon="recipe.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:RecipesPage}" Route="///RecipesPage"/>
         </Tab>
         <Tab Title="Groceries"
-             Icon="serving.png">
-            <ShellContent ContentTemplate="{DataTemplate pages:GroceriesPage}" Route="GroceriesPage"/>
+             Icon="grocery.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:GroceriesPage}" Route="///GroceriesPage"/>
         </Tab>
     </TabBar>
 

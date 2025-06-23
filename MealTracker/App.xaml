@@ -8,6 +8,9 @@
         <ResourceDictionary>
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
             <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
+            <converters:BoolToImageConverter x:Key="BoolToImageConverter"
+                                             TrueImage="favorite_fill.png"
+                                             FalseImage="favorite_border.png"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

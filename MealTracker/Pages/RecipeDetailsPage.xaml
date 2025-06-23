@@ -6,7 +6,8 @@
              xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
              xmlns:entities="clr-namespace:MealTracker.Entities"
              x:DataType="viewmodel:RecipeDetailsViewModel"
-             Title="Recipe Details">
+             Title="Recipe Details"
+             Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="*,*,Auto">
         <!-- Row 0 -->
         <Grid Grid.Row="0"

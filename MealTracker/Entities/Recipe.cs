@@ -37,6 +37,9 @@ namespace MealTracker.Entities
         [ObservableProperty]
         public int servings;
 
+        [ObservableProperty]
+        public bool isFavorite;
+
         //Simple constructor for basic recipe creation
         public Recipe(int id, string name)
         {
@@ -45,11 +48,12 @@ namespace MealTracker.Entities
         }
 
         //Simple constructor for basic recipe creation + image
-        public Recipe(int id, string name, string imagePath)
+        public Recipe(int id, string name, string imagePath, bool isFavorite)
         {
             Id = id;
             Name = name;
             ImagePath = imagePath;
+            IsFavorite = isFavorite;
         }
 
         //Full constructor for detailed recipe creation

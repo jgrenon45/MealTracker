@@ -19,7 +19,13 @@ namespace MealTracker.ViewModels
         private ObservableCollection<Recipe> recipes = new ObservableCollection<Recipe>();
 
         [ObservableProperty]
+        private ObservableCollection<Recipe> filteredRecipes = new ObservableCollection<Recipe>();
+
+        [ObservableProperty]
         private Recipe selectedRecipe;
+
+        [ObservableProperty]
+        private string recipeSearchText = string.Empty;
         #endregion
 
 
@@ -34,6 +40,11 @@ namespace MealTracker.ViewModels
             {
                 GoToRecipeDetailsCommand.Execute(value);
             }
+        }
+
+        partial void OnRecipeSearchTextChanged(string oldValue, string newValue)
+        {
+            FilterRecipesCommand.Execute(null);
         }
 
         #region Commands
@@ -54,9 +65,11 @@ namespace MealTracker.ViewModels
                     (
                         dto.Id,
                         dto.Name,
-                        dto.ImagePath
+                        dto.ImagePath,
+                        dto.IsFavorite
                     ));
                 }
+                FilterRecipesCommand.Execute(null);
             }
             catch (Exception ex)
             {
@@ -143,6 +156,45 @@ namespace MealTracker.ViewModels
             recipe.DeleteOldImageFile(recipe.ImagePath); // Delete the old image file if it exists
 
             Recipes.Remove(recipe);
+        }
+
+        [RelayCommand]
+        private void FilterRecipes()
+        {
+            FilteredRecipes.Clear();
+
+            var query = RecipeSearchText?.Trim() ?? "";
+
+            var results = string.IsNullOrWhiteSpace(query)
+                ? Recipes
+                : Recipes
+                    .Where(i => i.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+
+            foreach (Recipe item in results)
+            {
+                FilteredRecipes.Add(item);
+            }
+        }
+
+        [RelayCommand]
+        private async Task ToggleFavorite(Recipe recipe)
+        {
+            ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
+
+            RecipeDTO recipeDTO = new RecipeDTO
+            {
+                Id = recipe.Id,
+                Name = recipe.Name,
+                ImagePath = recipe.ImagePath,
+                PreparationTime = recipe.PreparationTime,
+                CookingTime = recipe.CookingTime,
+                Servings = recipe.Servings,
+                IsFavorite = !recipe.IsFavorite,
+            };
+
+            await database.UpdateAsync(recipeDTO);
+
+            recipe.IsFavorite = !recipe.IsFavorite;
         }
         #endregion
     }
