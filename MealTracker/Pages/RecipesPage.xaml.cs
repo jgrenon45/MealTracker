@@ -19,4 +19,9 @@ public partial class RecipesPage : ContentPage
 			vm.LoadRecipesCommand.Execute(null); // Load recipes when the page appears
 		}
     }
+
+    private void FilterButton_Clicked(object sender, EventArgs e)
+    {
+		navigationDrawer.ToggleDrawer();
+    }
 }

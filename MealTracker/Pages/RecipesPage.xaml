@@ -5,58 +5,184 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodel="clr-namespace:MealTracker.ViewModels"
              xmlns:entities="clr-namespace:MealTracker.Entities"
+             xmlns:navigationDrawer="clr-namespace:Syncfusion.Maui.NavigationDrawer;assembly=Syncfusion.Maui.NavigationDrawer"
+             xmlns:chip="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              x:DataType="viewmodel:RecipesViewModel"
              Title="Recipes">
-    <Grid RowDefinitions="Auto, Auto, *">
-        <Button Text="+ Add Recipe"
-                Command="{Binding CreateRecipeCommand}"
-                HorizontalOptions="Center"
-                VerticalOptions="Start"
-                Margin="10"
-                Grid.Row="0"/>
-        <SearchBar Grid.Row="1" 
-                   Placeholder="Search..."
-                   WidthRequest="500"
-                   Text="{Binding RecipeSearchText}"
-                   SearchCommand="{Binding FilterRecipesCommand}"/>
-        <CollectionView ItemsSource="{Binding FilteredRecipes}"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedRecipe, Mode=TwoWay}"
-                        Margin="10"
-                        WidthRequest="500"
-                        Grid.Row="2">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="entities:Recipe">
-                    <Grid Padding="10" ColumnDefinitions=".75*,.125*, .125*">
-                        <!-- Recipe Name -->
-                        <Label Text="{Binding Name}" VerticalOptions="Center" Grid.Column="0" />
-
-                        <!--Favourite Button-->
-
-                        <!-- 3 Dots Button -->
-                        <ImageButton Source="ellipsis.png"
-                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipesViewModel}}, Path=ShowOptionsCommand}"
-                                     CommandParameter="{Binding .}"
-                                     BackgroundColor="Transparent"
-                                     HeightRequest="24"
-                                     WidthRequest="24"
-                                     VerticalOptions="Center"
-                                     Grid.Column="1">
-                        </ImageButton>
-                        <ImageButton Source="{Binding IsFavorite, Converter={StaticResource BoolToImageConverter}}"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipesViewModel}}, Path=ToggleFavoriteCommand}"
-                            CommandParameter="{Binding .}"
-                            BackgroundColor="Transparent"
-                            HeightRequest="24"
-                            WidthRequest="24"
-                            VerticalOptions="Center"
-                            Grid.Column="2">
-                        </ImageButton>
-
+    <navigationDrawer:SfNavigationDrawer x:Name="navigationDrawer">
+        <navigationDrawer:SfNavigationDrawer.DrawerSettings>
+            <navigationDrawer:DrawerSettings DrawerWidth="450" Position="Right">
+                <navigationDrawer:DrawerSettings.DrawerHeaderView>
+                    <Grid BackgroundColor="#ac99ea">
+                        <Label Text="Filters :" FontSize="32" HorizontalOptions="Center" />
                     </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                </navigationDrawer:DrawerSettings.DrawerHeaderView>
+                <navigationDrawer:DrawerSettings.DrawerContentView>
+                    <ScrollView>
+                        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" 
+                              BackgroundColor="#1f1f1f"
+                              RowSpacing="20">
+                            <!--#region Favorite Filter-->
+                            <VerticalStackLayout Grid.Row="0">
+                                <Label Text="General :" Margin="2"/>
+                                <chip:SfChipGroup ChipType="Filter">
+                                    <chip:SfChipGroup.ChipLayout>
+                                        <FlexLayout Wrap="Wrap"
+                                                    Direction="Row"
+                                                    AlignItems="Start">
+                                        </FlexLayout>
+                                    </chip:SfChipGroup.ChipLayout>
+                                    <chip:SfChipGroup.Items>
+                                        <chip:SfChip Text="Favorites" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                    </chip:SfChipGroup.Items>
+                                </chip:SfChipGroup>
+                            </VerticalStackLayout>
+                            <!--#endregion-->
+                            <!--#region Category Filter-->
+                            <VerticalStackLayout Grid.Row="1">
+                                <Label Text="Category :" Margin="2"/>
+                                <chip:SfChipGroup ChipType="Filter">
+                                    <chip:SfChipGroup.ChipLayout>
+                                        <FlexLayout Wrap="Wrap"
+                                                    Direction="Row"
+                                                    AlignItems="Start"/>
+                                    </chip:SfChipGroup.ChipLayout>
+                                    <chip:SfChipGroup.Items>
+                                        <chip:SfChip Text="Desert" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="Appetizer" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="Vegeterian" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="Main dish" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="Main dish" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                    </chip:SfChipGroup.Items>
+                                </chip:SfChipGroup>
+                            </VerticalStackLayout>
+                            <!--#endregion-->
+                            <!--#region Prepartion Time Filter-->
+                            <VerticalStackLayout Grid.Row="2">
+                                <Label Text="Preparation time (min) :" Margin="2"/>
+                                <chip:SfChipGroup ChipType="Filter">
+                                    <chip:SfChipGroup.ChipLayout>
+                                        <FlexLayout Wrap="Wrap"
+                                                    Direction="Row"
+                                                    AlignItems="Start"/>
+                                    </chip:SfChipGroup.ChipLayout>
+                                    <chip:SfChipGroup.Items>
+                                        <chip:SfChip Text="&lt; 10" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="10 to 20" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="20 to 30" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="30 to 40" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="40 to 50" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="50 to 60" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="&gt; 60" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                    </chip:SfChipGroup.Items>
+                                </chip:SfChipGroup>
+                            </VerticalStackLayout>
+                            <!--#endregion-->
+                            <!--#region Cooking Time Filter-->
+                            <VerticalStackLayout Grid.Row="3">
+                                <Label Text="Cooking time (min) :" Margin="2"/>
+                                <chip:SfChipGroup ChipType="Filter">
+                                    <chip:SfChipGroup.ChipLayout>
+                                        <FlexLayout Wrap="Wrap"
+                            Direction="Row"
+                            AlignItems="Start"/>
+                                    </chip:SfChipGroup.ChipLayout>
+                                    <chip:SfChipGroup.Items>
+                                        <chip:SfChip Text="&lt; 10" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="10 to 20" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="20 to 30" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="30 to 40" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="40 to 50" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="50 to 60" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="&gt; 60" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                    </chip:SfChipGroup.Items>
+                                </chip:SfChipGroup>
+                            </VerticalStackLayout>
+                            <!--#endregion-->
+                            <!--#region Servings Filter-->
+                            <VerticalStackLayout Grid.Row="4">
+                                <Label Text="Servings :" Margin="2"/>
+                                <chip:SfChipGroup ChipType="Filter">
+                                    <chip:SfChipGroup.ChipLayout>
+                                        <FlexLayout Wrap="Wrap"
+                                                    Direction="Row"
+                                                    AlignItems="Start"/>
+                                    </chip:SfChipGroup.ChipLayout>
+                                    <chip:SfChipGroup.Items>
+                                        <chip:SfChip Text="1-2" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="2-3" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="3-4" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="4-5" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                        <chip:SfChip Text="5+" HeightRequest="30" WidthRequest="100" Margin="2"/>
+                                    </chip:SfChipGroup.Items>
+                                </chip:SfChipGroup>
+                            </VerticalStackLayout>
+                            <!--#endregion-->
+                        </Grid>
+                    </ScrollView>
+                </navigationDrawer:DrawerSettings.DrawerContentView>
+            </navigationDrawer:DrawerSettings>
+        </navigationDrawer:SfNavigationDrawer.DrawerSettings>
+        <navigationDrawer:SfNavigationDrawer.ContentView >
+            <Grid RowDefinitions="Auto, Auto, *">
+                <Grid ColumnDefinitions="*, Auto" 
+                      Grid.Row="0" 
+                      HorizontalOptions="Center"
+                      WidthRequest="500"
+                      Margin="10">
+                    <Button Text="+ Add Recipe"
+                            Command="{Binding CreateRecipeCommand}"
+                            HorizontalOptions="Center"
+                            Grid.ColumnSpan="2"
+                            Grid.Column="0"/>
+                    <Button ImageSource="filter.png"
+                            Clicked="FilterButton_Clicked"
+                            Grid.Column="1"/>
+                </Grid>
+                <SearchBar Grid.Row="1" 
+                       Placeholder="Search..."
+                       WidthRequest="500"
+                       Text="{Binding RecipeSearchText}"
+                       SearchCommand="{Binding FilterRecipesCommand}"/>
+                <CollectionView ItemsSource="{Binding FilteredRecipes}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedRecipe, Mode=TwoWay}"
+                            Margin="10"
+                            WidthRequest="500"
+                            Grid.Row="2">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="entities:Recipe">
+                            <Grid Padding="10" ColumnDefinitions=".75*,.125*, .125*">
+                                <!-- Recipe Name -->
+                                <Label Text="{Binding Name}" VerticalOptions="Center" Grid.Column="0" />
 
-    </Grid>
+                                <!--Favourite Button-->
+
+                                <!-- 3 Dots Button -->
+                                <ImageButton Source="ellipsis.png"
+                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipesViewModel}}, Path=ShowOptionsCommand}"
+                                         CommandParameter="{Binding .}"
+                                         BackgroundColor="Transparent"
+                                         HeightRequest="24"
+                                         WidthRequest="24"
+                                         VerticalOptions="Center"
+                                         Grid.Column="1">
+                                </ImageButton>
+                                <ImageButton Source="{Binding IsFavorite, Converter={StaticResource BoolToImageConverter}}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RecipesViewModel}}, Path=ToggleFavoriteCommand}"
+                                CommandParameter="{Binding .}"
+                                BackgroundColor="Transparent"
+                                HeightRequest="24"
+                                WidthRequest="24"
+                                VerticalOptions="Center"
+                                Grid.Column="2">
+                                </ImageButton>
+
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </navigationDrawer:SfNavigationDrawer.ContentView>
+    </navigationDrawer:SfNavigationDrawer>
 </ContentPage>

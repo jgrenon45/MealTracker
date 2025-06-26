@@ -149,7 +149,7 @@ namespace MealTracker.ViewModels
             ISQLiteAsyncConnection database = sqliteConnectionFactory.CreateConnection();
 
             // If a new image was picked
-            if (!string.IsNullOrWhiteSpace(SelectedImagePath) && File.Exists(SelectedImagePath))
+            if (!string.IsNullOrWhiteSpace(SelectedImagePath) && SelectedImagePath != Recipe.ImagePath)
             {
                 // Delete old image if replacing
                 if (!string.IsNullOrWhiteSpace(Recipe.ImagePath) && File.Exists(Recipe.ImagePath))
